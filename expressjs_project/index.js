@@ -37,12 +37,26 @@ app.get('/team.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'team.html'));
 });
 
+app.use(session({
+    secret: crypto.randomBytes(32).toString('hex'),
+    resave: false,
+    saveUninitialized: true
+}));
+
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+    if (!req.session.user) {
+        res.sendFile(path.join(__dirname, 'login.html'));
+    }else {
+        res.redirect("/home");
+    }
 });
 
 app.get('/signup', (req, res) => {
+    if (!req.session.user) {
     res.sendFile(path.join(__dirname, 'signup.html'));
+}else {
+    res.redirect("/home");
+}
 });
 
 
@@ -80,11 +94,7 @@ app.post("/signup", async (req, res) => {
 
 
 
-app.use(session({
-    secret: crypto.randomBytes(32).toString('hex'),
-    resave: false,
-    saveUninitialized: true
-}));
+
 
 app.post("/login", async (req, res) => {
     try {
